@@ -8,7 +8,7 @@ class server:
 
 	def __init__(self, port):
 		self.messageNum = 0
-		self.client = client.client()
+		self.client = None
 		self.connections = []
 		self.port = port
 		#TODO check ip
@@ -26,21 +26,24 @@ class server:
 			for sock in readsock:
 				if sock == self.serv:
 					(clientsocket, address) = self.serv.accept()
+					self.connections.append(clientsocket)
 					self.client = client.client(clientsocket)
 					self.addr = address
 					self.receive()
 				elif sock == sys.stdin:
 					# TODO check port
-					port = 9999
+					port = 5000
 					sstr = sys.stdin.readline()
 					msg = sstr
-					self.send(msg, "128.205.54.5", port)
+					self.send(msg, "166.143.225.234", port)
 				else:
+					self.client = client.client(sock)
 					self.receive()
 
 	def send(self, data, host, port):
-		self.client = client.client()
-		self.client.connect(host, port)
+		if self.client is None:
+			self.client = client.client()
+			self.client.connect(host, port)
 		self.client.send(data)
 
 	def receive(self):

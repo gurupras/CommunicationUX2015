@@ -6,7 +6,7 @@ import socket
 def send_data(msg):
 	msg = msg + "\n"
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.connect(("128.205.54.5", 9999))
+	sock.connect(("166.143.225.234", 9999))
 	totalsent = 0
 	while totalsent < len(msg):
 		sent = sock.send(msg[totalsent:])
@@ -25,6 +25,8 @@ Command = "";
 
 rightMotor = 5.001;
 leftMotor = 5.001;
+
+instructionsPerSec = 8.0
 
 clear = lambda: os.system('cls')
 
@@ -86,11 +88,11 @@ while done==False:
     if(joystick.get_button(1) ==  1):
         clawState = 0
 
-    senservo = 4
-    senbigact = 16
-    sensmallact = 17
+    senservo = 4 *  (instructionsPerSec / 16)
+    senbigact = 16 * (instructionsPerSec / 16)
+    sensmallact = 17 * (instructionsPerSec / 16)
     
-    sensmotor = 4
+    sensmotor = 4 * (instructionsPerSec / 16)
     
     if(joystick.get_button( 5 )):
         manipulatorPosition += joy1_right/(-senservo) #X        
@@ -99,9 +101,9 @@ while done==False:
         
     shoulderPosition += joy1_left/(-senbigact) #Y
     
-    basePosition += (joy1_righttrigger-joy1_lefttrigger)/(senservo) #
+    basePosition += (joy1_lefttrigger-joy1_righttrigger)/(senservo) #
     
-    rightMotor = -joy2_right/(sensmotor)
+    rightMotor = joy2_right/(sensmotor)
     leftMotor = -joy2_left/(sensmotor)
     
     if (abs(elbowPosition) > 10):
@@ -145,7 +147,7 @@ while done==False:
     print command
     command = ""
     # Limit to 16 frames per second
-    time.sleep(0.0625)
+    time.sleep(.125)
     #clock.tick(16)
     #clear()
     
