@@ -1,0 +1,7 @@
+import sys
+import server
+
+port = 5000
+
+s = server.server(port)
+s.start()
